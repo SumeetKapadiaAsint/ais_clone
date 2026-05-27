@@ -1,63 +1,14 @@
-name: DEP_CI
+- name: Harden Runner
+  uses: step-security/harden-runner@v2
+  with:
+    egress-policy: block
+    allowed-endpoints: |
+      github.com:443
+      api.github.com:443
+      actions.githubusercontent.com:443
 
-on:
-  push:
-    branches: ["main"]
+- name: Test GitHub
+  run: curl -I https://github.com
 
-  pull_request:
-    branches: ["main"]
-
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    steps:
-
-      - name: Harden Runner
-        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594
-        with:
-          egress-policy: block
-          disable-sudo: true
-          allowed-endpoints: |
-            github.com:443
-            *.github.com:443
-            api.github.com:443
-            codeload.github.com:443
-            raw.githubusercontent.com:443
-            *.githubusercontent.com:443
-            objects.githubusercontent.com:443
-            objects-origin.githubusercontent.com:443
-            github-releases.githubusercontent.com:443
-            pkg-containers.githubusercontent.com:443
-            uploads.github.com:443
-            actions.githubusercontent.com:443
-            *.actions.githubusercontent.com:443
-            results-receiver.actions.githubusercontent.com:443
-            ghcr.io:443
-            repo.maven.apache.org:443
-            repo1.maven.org:443
-            api.adoptium.net:443
-            deb.debian.org:443
-            security.ubuntu.com:443
-            archive.ubuntu.com:443
-            
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run a one-line script
-        run: echo "Security runner complete"
-
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: maven
-
-      - name: Download Maven dependencies
-        run: mvn dependency:go-offline
+- name: Checkout
+  uses: actions/checkout@v4
