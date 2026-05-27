@@ -44,6 +44,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Test GitHub Token
+        env:
+          TEST_TOKEN: ${{ secrets.TEST_TOKEN }}
+        run: |
+          curl -H "Authorization: token $TEST_TOKEN" https://api.github.com/user
+
       # Simple verification step
       - name: Run a one-line script
         run: echo "Security runner complete"
