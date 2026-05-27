@@ -1,38 +1,33 @@
-# This is a basic workflow to help you get started with Actions
-
 name: DEP_CI
 
-# Controls when the workflow will run
 on:
   push:
     branches: [ "main" ]
+
   pull_request:
     branches: [ "main" ]
 
   workflow_dispatch:
 
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-      
+      # Harden Runner MUST be the first step
       - name: Harden Runner
         uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594
         with:
-          egress-policy: audit
+          egress-policy: block
           allowed-endpoints: |
             github.com:443
             api.github.com:443
+            codeload.github.com:443
+            raw.githubusercontent.com:443
             objects.githubusercontent.com:443
             objects-origin.githubusercontent.com:443
             uploads.github.com:443
@@ -45,20 +40,23 @@ jobs:
             deb.debian.org:443
             security.ubuntu.com:443
             archive.ubuntu.com:443
-            
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo security runnner complete
-        
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-     
 
-      - uses: actions/setup-java@v4
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Simple verification step
+      - name: Run a one-line script
+        run: echo "Security runner complete"
+
+      # Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
           cache: maven
 
-      # Runs a build command
+      # Download Maven dependencies
       - name: Download dependencies only
         run: mvn dependency:go-offline
