@@ -1,14 +1,33 @@
-- name: Harden Runner
-  uses: step-security/harden-runner@v2
-  with:
-    egress-policy: block
-    allowed-endpoints: |
-      github.com:443
-      api.github.com:443
-      actions.githubusercontent.com:443
+name: DEP_CI
 
-- name: Test GitHub
-  run: curl -I https://github.com
+on:
+  push:
+    branches: ["main"]
 
-- name: Checkout
-  uses: actions/checkout@v4
+  pull_request:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: block
+          allowed-endpoints: |
+            github.com:443
+            api.github.com:443
+            actions.githubusercontent.com:443
+
+      - name: Test GitHub
+        run: curl -I https://github.com
+
+      - name: Checkout
+        uses: actions/checkout@v4
