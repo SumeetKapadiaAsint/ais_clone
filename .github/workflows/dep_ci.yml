@@ -12,30 +12,25 @@ jobs:
 
     steps:
 
-      # MUST be first
       - name: Harden Runner
         uses: step-security/harden-runner@v2
         with:
           egress-policy: block
-          allowed-endpoints: |
-            github.com:443
-            api.github.com:443
-            codeload.github.com:443
-            actions.githubusercontent.com:443
-            raw.githubusercontent.com:443
-            objects.githubusercontent.com:443
-            objects-origin.githubusercontent.com:443
-            github-releases.githubusercontent.com:443
-            pkg-containers.githubusercontent.com:443
+          allowed-endpoints: >
+            github.com:443,
+            api.github.com:443,
+            codeload.github.com:443,
+            actions.githubusercontent.com:443,
+            raw.githubusercontent.com:443,
+            objects.githubusercontent.com:443,
+            objects-origin.githubusercontent.com:443,
+            github-releases.githubusercontent.com:443,
+            pkg-containers.githubusercontent.com:443,
             results-receiver.actions.githubusercontent.com:443
 
-      - name: Test GitHub Connectivity
+      - name: Test GitHub
         run: |
           curl -I https://github.com
-          curl -I https://api.github.com
 
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Verify
-        run: echo "Checkout succeeded"
